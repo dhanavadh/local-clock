@@ -6,3 +6,5 @@ DerivedData/
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
+local-clock.app/Contents/MacOS/local-clock
+local-clock.app/Contents/Info.plist

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var currentTime = Date()
+    @State private var textColor = Color.white
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -14,26 +15,32 @@ struct ContentView: View {
     var body: some View {
         Text(dateFormatter.string(from: currentTime))
             .font(.system(size: 80, weight: .bold, design: .monospaced))
-            .foregroundColor(.init(white: 0.9)) // Off-white color
-            .padding()
+            .foregroundColor(textColor)
+            .padding(5) // Add a small padding
             .onReceive(timer) { input in
                 self.currentTime = input
             }
-            .background(WindowAccessor { window in
-                if let window = window {
-                    window.isOpaque = false
-                    window.backgroundColor = .clear
-                    window.titlebarAppearsTransparent = true
-                    window.styleMask = .borderless
-                    window.hasShadow = false
-                    window.level = .floating
-                    window.collectionBehavior = .canJoinAllSpaces
-                    if let screen = NSScreen.main {
-                        let screenRect = screen.visibleFrame
-                        let newOrigin = CGPoint(x: screenRect.origin.x, y: screenRect.origin.y)
-                        window.setFrameOrigin(newOrigin)
-                    }
-                }
-            })
+            .onAppear(perform: updateColor)
+            .onReceive(NotificationCenter.default.publisher(for: .colorDidChange)) { _ in
+                updateColor()
+            }
+    }
+
+    private func updateColor() {
+        let colorName = UserDefaults.standard.string(forKey: "selectedColor") ?? "White"
+        switch colorName {
+        case "Red":
+            textColor = .red
+        case "Green":
+            textColor = .green
+        case "Blue":
+            textColor = .blue
+        case "Yellow":
+            textColor = .yellow
+        case "Black":
+            textColor = .black
+        default:
+            textColor = .white
+        }
     }
 }
